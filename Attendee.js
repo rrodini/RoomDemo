@@ -9,4 +9,4 @@ function Attendee(role, id) {
 
 }
 
-module.exports = Attendee;ªª
+module.exports = Attendee;
