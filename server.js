@@ -25,7 +25,7 @@ app.get('/player.js', function (req, res) {
 
 
 server = http.Server(app);
-server.listen(5000);
+server.listen(process.env.PORT || 5000);
 
 io = socketIO(server);
 let rooms = new Rooms(io);
