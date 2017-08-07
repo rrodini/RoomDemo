@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.label {
+    display: inline-block;
+    width: 5em;
+    vertical-align: top;
+    text-align: right;
+    margin-right: 15px;
+}
+#centered {
+    display: flex;
+    justify-content: center;
+    margin: 5px;
+}
+</style>
+
+</head>
+<body>
+
+
+    <hr />
+    <label class="label" for="role">Role: </label><span id="role"></span><br>
+    <label class="label" for="sockid">Id: </label><span id="sockid"></span><br>
+    <label class="label" for="room">Room: </label><span id="room"></span><br>
+    <hr />
+    <fieldset>
+        <legend>Send A Message</legend>
+        <label class="label" for="message">Message: </label><input id="message" size="40"/><br>
+        <label class="label" for="text">Text: </label><input id="text" size="40"/><br>
+        <div id="centered"><button  id="button">Send</button></div>
+    </fieldset>
+
+
+<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="player.js"></script>
+</body>
+</html>
