@@ -16,7 +16,7 @@ window.onload = function () {
 
     socket.on('invitation', function () {
         console.log(">>invitation");
-        let num = window.prompt("Enter room #:");
+        var num = window.prompt("Enter room #:");
         roomNumber = num;
         socket.emit("join.room", num);
     });
