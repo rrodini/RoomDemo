@@ -4,9 +4,9 @@
 
 
 window.onload = function () {
-    let roomNumber;
+    var roomNumber;
 //    let socket = io('http://localhost:5000/player', {reconnection: false});
-    let socket = io(location.host + '/player', {reconnection: false});
+    var socket = io(location.host + '/player', {reconnection: false});
     $("#role").text('Player');
     console.log("onload");
     socket.on('connect', function () {
