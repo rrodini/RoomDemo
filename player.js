@@ -5,6 +5,7 @@
 
 window.onload = function () {
     var roomNumber;
+    var invitationCount = 0;
 //    let socket = io('http://localhost:5000/player', {reconnection: false});
     var socket = io(location.host + '/player', {reconnection: false});
     $("#role").text('Player');
@@ -16,9 +17,14 @@ window.onload = function () {
 
     socket.on('invitation', function () {
         console.log(">>invitation");
-        var num = window.prompt("Enter room #:");
-        roomNumber = num;
-        socket.emit("join.room", num);
+        invitationCount++;
+        if (invitationCount <= 3) {
+            var num = window.prompt("Enter room #:");
+            roomNumber = num;
+            socket.emit("join.room", num);
+        } else {
+            alert("Please refresh page and try again.")
+        }
     });
 
     socket.on('room.joined', function (num) {
