@@ -30,6 +30,7 @@ window.onload = function () {
     socket.on('toPlayer', function (text) {
         console.log(">>toPlayer");
         console.log(text);
+        $("#messages").prepend("<div>" + text + "</div>");
     });
 
     socket.on('disconnect', function (reason) {

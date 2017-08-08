@@ -24,6 +24,7 @@ window.onload = function () {
     socket.on('toAdmin', function (text) {
         console.log(">>toAdmin");
         console.log(text);
+        $("#messages").prepend("<div>" + text + "</div>");
     });
 
     $('#button').on('click', function () {
