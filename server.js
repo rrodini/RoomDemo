@@ -84,8 +84,10 @@ function processPlayerCommand(socket) {
             room.join('player', socket.id);
             room.printAttendees();
         } else {
-            // sent player another invitation.
             console.log("%s entered bad room #: %s", socket.id, num);
+            // sent player another invitation.
+            socket.emit('invitation');
+            return;
         }
         socket.emit('room.joined', num);
         console.log("<<room.joined");
@@ -102,7 +104,9 @@ function processPlayerCommand(socket) {
         // remove player from room.
         let num = socket.roomNum;
         let room = rooms.get(num);
-        room.leave(socket.id);
-        socket.leave(num);
+        if (room) {
+            room.leave(socket.id);
+            socket.leave(num);
+        }
     })
 }

@@ -16,7 +16,6 @@ window.onload = function () {
 
     socket.on('room.joined', function (num) {
         console.log(">>room.joined");
-        console.log("room# from socket.room: %s", socket.roomNum);
         $("#room").text(num);
         roomNumber = num;
     });
