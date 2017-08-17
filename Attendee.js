@@ -3,9 +3,10 @@
  */
 "use strict";
 // constructor
-function Attendee(role, id) {
+function Attendee(role, socket, id) {
     this.role = role;  // 'admin', 'player', 'projector'
-    this.socketid = id;  // socketid
+    this.socket = socket; // real socket object
+    this.socketid = id;  // socket.id
 
 }
 

@@ -3,21 +3,21 @@
  * This class is a singleton.
  */
 let Room = require('./Room');
+
+let rooms;  // Array of Room objects.
+
 //constructor
-function Rooms(io) {
-    this.rooms = [];
-    this.io = io;  // reference to socket.io server
+function Rooms() {
+    rooms = [];
 }
 /**
  * generate a unique four digit room #.
- * @param self reference to rooms object.
- * @returns four digit room # (number).
+ * @returns four digit room # (Number).
  */
-
-function genUnique(self) {
-    function duplicated(self, num) {
-        for (let i = 0; i < self.rooms.length; i++) {
-            if (num === self.rooms[i].getNumber()) {
+function genUnique() {
+    function duplicated(num) {
+        for (let i = 0; i < rooms.length; i++) {
+            if (num === rooms[i].getNumber()) {
                 return true;
             }
         }
@@ -27,46 +27,65 @@ function genUnique(self) {
     do {
         let real = Math.random();
         num = Math.floor(real * 10000.0);
-    } while (duplicated(self, num));
+    } while (duplicated(num));
     return num;
 }
-
+/**
+ * Is the given room number valid?
+ * @param num room number from a player. (Number)
+ * @returns true => yes, it is valid. (Boolean)
+ */
 Rooms.prototype.isValid = function(num) {
-    for (let i = 0; i < this.rooms.length; i++) {
-        let room = this.rooms[i];
+    for (let i = 0; i < rooms.length; i++) {
+        let room = rooms[i];
         if (num === room.getNumber()) {
             return true;
         }
     }
     return false;
 }
-
+/**
+ * Create a new room within rooms.
+ * @param socket.id of admin socket within new room.
+ * @returns room Object (Room)
+ */
 Rooms.prototype.create = function (adminId) {
     let num = genUnique(this);
     let room = new Room(num, adminId);
-    this.rooms.push(room);
+    rooms.push(room);
     return room;
 }
-
+/**
+ * Get the number of active rooms.
+ * @returns number of active rooms. (Number)
+ */
+Rooms.prototype.getRoomCount = function() {
+    return rooms.length;
+}
+/**
+ * Get a room object given it's room number.
+ * @param num room number. (Number)
+ * @returns room object or undefined.  (Room)
+ */
 Rooms.prototype.get = function (num) {
-    for (let i = 0; i < this.rooms.length; i++) {
-        let room = this.rooms[i]
+    for (let i = 0; i < rooms.length; i++) {
+        let room = rooms[i]
         if (num === room.getNumber()) {
             return room;
         }
     }
-    return undefined; // this will lead to run-time error
+    return undefined; // this may lead to run-time error
 }
 /**
- * destroy the given room given its number.  Assumes that the admin has disconnected.
+ * Destroy the given room given its number.  Assumes that the admin has disconnected.
  * Therefore, disconnect all players and projectors.
- * @param num
+ * @param num room number. (Number)
  */
 Rooms.prototype.destroy = function(num) {
     let index = -1;
     let room;
-    for (let i = 0; i < this.rooms.length; i++) {
-        room = this.rooms[i];
+    for (let i = 0; i < rooms.length; i++) {
+        room = rooms[i];
         if (num === room.getNumber()) {
             index = i;
             break;
@@ -79,14 +98,15 @@ Rooms.prototype.destroy = function(num) {
             let attendee = attendees[i];
             if (attendee.role !== 'admin') {
                 // scan off the namespace
-                let socketid = attendee.socketid;
-                let j = socketid.lastIndexOf('#');
-                socketid = socketid.substr(j+1);
+                // let socketid = attendee.socketid;
+                // let j = socketid.lastIndexOf('#');
+                // socketid = socketid.substr(j+1);
                 // WARNING: using the internal structure of sockets.io here.
-                this.io.sockets.sockets[socketid].disconnect(true);
+                // this.io.sockets.sockets[socketid].disconnect(true);
+                attendee.socket.disconnect(true);
             }
         }
-        this.rooms.splice(index, 1);
+        rooms.splice(index, 1);
     }
 }
 

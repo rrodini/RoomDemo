@@ -5,10 +5,13 @@ var express = require('express'),
     app = express(),
     http = require('http'),
     socketIO = require('socket.io'),
+    dotenv = require('dotenv'),
+    md5 = require('MD5'),
     server, io;
 //let Attendee = require('./Attendee');
 let Room = require('./Room');
 let Rooms = require('./Rooms');
+dotenv.load();
 
 app.get('/admin.html', function (req, res) {
     res.sendFile(__dirname + '/admin.html');
@@ -28,7 +31,10 @@ server = http.Server(app);
 server.listen(process.env.PORT || 5000);
 
 io = socketIO(server);
-let rooms = new Rooms(io);
+let pwd = md5(process.env.PASSWORD);
+console.log("password: " + pwd);
+
+let rooms = new Rooms();
 let admin_namespace = io.of("/admin");
 let player_namespace = io.of("/player");
 console.log(admin_namespace.name);
@@ -40,18 +46,26 @@ console.log(player_namespace.name);
 admin_namespace.on('connection', function (socket) {
     console.log(">>admin connection");
     //console.log(admin_namespace.connected);
-    let room = rooms.create(socket.id);
-    let num = room.getNumber();
-    room.join('admin', socket.id);
-    room.printAttendees();
-    socket.roomNum = num;
-    socket.join(num);
-    socket.emit('room.joined', num);
-    console.log("<<room.joined");
-    processAdminCommand(socket, num);
+    processAdminCommand(socket);
 });
 
-function processAdminCommand(socket, num) {
+function processAdminCommand(socket) {
+    socket.on('login', function(loginPwd) {
+        console.log('>>login pwd: %s', md5(loginPwd));
+        if (md5(loginPwd) === pwd) {
+            let room = rooms.create(socket.id);
+            let num = room.getNumber();
+            room.join('admin', socket, socket.id);
+            room.printAttendees();
+            socket.roomNum = num;
+            socket.join(num);
+            socket.emit('room.joined', num);
+            console.log("<<room.joined");
+        } else {
+            socket.emit('bad.login');
+            console.log('<<bad.login')
+        }
+    })
     socket.on('toPlayer', function (text) {
         console.log(">>toPlayer");
         console.log(text);
@@ -81,7 +95,7 @@ function processPlayerCommand(socket) {
             socket.roomNum = num;
             socket.join(num);
             let room = rooms.get(num);
-            room.join('player', socket.id);
+            room.join('player', socket, socket.id);
             room.printAttendees();
         } else {
             console.log("%s entered bad room #: %s", socket.id, num);

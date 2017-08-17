@@ -1,38 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1" >
-<style>
-.label {
-    display: inline-block;
-    width: 5em;
-    vertical-align: top;
-    text-align: right;
-    margin-right: 15px;
-}
-#centered {
-    display: flex;
-    justify-content: center;
-    margin: 5px;
-}
-</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .label {
+            display: inline-block;
+            width: 5em;
+            vertical-align: top;
+            text-align: right;
+            margin-right: 15px;
+        }
+        .web_dialog_overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: #000000;
+            opacity: .15;
+            z-index: 101;
+            display: none;
+        }
+        .web_dialog {
+            display: none;
+            position: fixed;
+            width: 380px;
+            height: 100px;
+            top: 25%;
+            left: 50%;
+            margin-left: -190px;
+            margin-top: -100px;
+            background-color: #ffffff;
+            border: 2px solid #336699;
+            padding: 0px;
+            z-index: 102;
+        }
+        .align_center {
+            text-align: center;
+        }
+        #centered {
+            display: flex;
+            justify-content: center;
+            margin: 5px;
+        }
+    </style>
 
 </head>
 <body>
+<div id="overlay" class="web_dialog_overlay"></div>
+<div id="dialog" class="web_dialog">
+    <form>
+        <br>
+        <div class="align_center">
+            <label class="label" for="password">Password: <input type="password" id="password"
+                                                                 placeholder="Enter password"></label>
+        </div>
+        <br>
+        <div class="align_center">
+            <input type="submit" id="ok" value="OK">
+        </div>
+    </form>
+</div>
 
-
-    <hr />
-    <label class="label" for="role">Role: </label><span id="role"></span><br>
-    <label class="label" for="sockid">Id: </label><span id="sockid"></span><br>
-    <label class="label" for="room">Room: </label><span id="room"></span><br>
-    <hr />
-    <fieldset>
-        <legend>Send A Message</legend>
-        <label class="label" for="message">Message: </label><input id="message" size="40"/><br>
-        <label class="label" for="text">Text: </label><input id="text" size="40"/><br>
-        <div id="centered"><button  id="button">Send</button></div>
-    </fieldset>
-    <div id="messages"></div>
+<hr/>
+<label class="label" for="role">Role: </label><span id="role"></span><br>
+<label class="label" for="sockid">Id: </label><span id="sockid"></span><br>
+<label class="label" for="room">Room: </label><span id="room"></span><br>
+<hr/>
+<fieldset>
+    <legend>Send A Message</legend>
+    <label class="label" for="message">Message: </label><input id="message" size="40"/><br>
+    <label class="label" for="text">Text: </label><input id="text" size="40"/><br>
+    <div id="centered">
+        <button id="button">Send</button>
+    </div>
+</fieldset>
+<div id="messages"></div>
 
 
 <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>

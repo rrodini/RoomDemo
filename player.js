@@ -20,7 +20,7 @@ window.onload = function () {
         invitationCount++;
         if (invitationCount <= 3) {
             var num = window.prompt("Enter room #:");
-            roomNumber = num;
+            //roomNumber = num;
             socket.emit("join.room", num);
         } else {
             alert("Please refresh page and try again.")
@@ -28,6 +28,7 @@ window.onload = function () {
     });
 
     socket.on('room.joined', function (num) {
+        // confirmation from server.
         console.log(">>room.joined");
         $("#room").text(num);
         roomNumber = num;
