@@ -20,7 +20,7 @@ window.onload = function () {
     showDialog();
     var roomNumber;
 //    let socket = io('http://localhost:5000/admin', {reconnection: false});
-    var socket = io(location.host+'/admin', {reconnection: false});
+    var socket = io(location.host+'/admin', {transports: ['websocket'], reconnection: false});
 
 
     $("#role").text('Admin');
@@ -60,6 +60,22 @@ window.onload = function () {
         console.log(">>toAdmin");
         console.log(text);
         $("#messages").prepend("<div>" + text + "</div>");
+    });
+
+    socket.on('disconnect', function (reason) {
+//        socket.emit('admin-disconnect', reason);
+        window.alert("disconnect:" + reason);
+        console.log(">>disconnect reason: " + reason);
+    });
+
+    socket.on('player-disconnect', function (reason) {
+        window.alert("player-disconnect: " + reason);
+        console.log(">>disconnect reason: " + reason);
+    });
+
+    socket.on('error', function (reason) {
+        window.alert("error:" + reason.message);
+        console.log(">>error reason: " + reason.message);
     });
 
     $('#button').on('click', function () {

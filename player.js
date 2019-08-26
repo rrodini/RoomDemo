@@ -1,13 +1,14 @@
 /**
- * admin.js - the admin channel connection.
+ * player.js - the player channel connection.
  */
 
 
 window.onload = function () {
     var roomNumber;
     var invitationCount = 0;
+    $("#button").prop("disabled", true);
 //    let socket = io('http://localhost:5000/player', {reconnection: false});
-    var socket = io(location.host + '/player', {reconnection: false});
+    var socket = io(location.host + '/player', {transports: ['websocket'], reconnection: false});
     $("#role").text('Player');
     console.log("onload");
     socket.on('connect', function () {
@@ -32,6 +33,13 @@ window.onload = function () {
         console.log(">>room.joined");
         $("#room").text(num);
         roomNumber = num;
+        var name = window.prompt("Enter name:");
+        socket.emit('register', name);
+    });
+
+    socket.on('registered', function() {
+        console.log(">>registered");
+        $("#button").prop("disabled", false);
     });
 
     socket.on('toPlayer', function (text) {
@@ -41,7 +49,19 @@ window.onload = function () {
     });
 
     socket.on('disconnect', function (reason) {
+//        socket.emit('player-disconnect', reason);
+        window.alert("disconnect:" + reason);
         console.log(">>disconnect reason: " + reason);
+    });
+
+    socket.on('admin-disconnect', function (reason) {
+        window.alert("admin-disconnect: " + reason);
+        console.log(">>disconnect reason: " + reason);
+    });
+
+    socket.on('error', function (reason) {
+        window.alert("error:" + reason.message);
+        console.log(">>error reason: " + reason.message);
     });
 
     $('#button').on('click', function () {

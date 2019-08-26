@@ -58,7 +58,7 @@ function processAdminCommand(socket) {
             room.join('admin', socket, socket.id);
             room.printAttendees();
             socket.roomNum = num;
-            socket.join(num);
+            socket.join(num.toString());
             socket.emit('room.joined', num);
             console.log("<<room.joined");
         } else {
@@ -72,6 +72,7 @@ function processAdminCommand(socket) {
         player_namespace.to(socket.roomNum).emit('toPlayer', text);
     });
     socket.on('disconnect', function(reason) {
+        player_namespace.to(socket.roomNum).emit('admin-disconnect', reason);
         console.log(">>admin disconnect reason: %s", reason);
         let num = socket.roomNum;
         rooms.destroy(num);
@@ -93,7 +94,7 @@ function processPlayerCommand(socket) {
         num = parseInt(num);
         if (rooms.isValid(num)) {
             socket.roomNum = num;
-            socket.join(num);
+            socket.join(num.toString());
             let room = rooms.get(num);
             room.join('player', socket, socket.id);
             room.printAttendees();
@@ -106,7 +107,15 @@ function processPlayerCommand(socket) {
         socket.emit('room.joined', num);
         console.log("<<room.joined");
     });
-
+    socket.on('register' , function(name) {
+        console.log(">>register %s", name);
+        socket.emit('registered');
+//        socket.to(socket.roomNum.toString()).emit('registered');
+// doesn't work.
+//        io.to(socket.roomNum.toString()).emit('registered');
+// bad - broadcasts to all players
+//        player_namespace.to(socket.roomNum).emit('registered');
+    });
     socket.on('toAdmin', function (text) {
         console.log(">>toAdmin");
         console.log(text);
@@ -115,6 +124,7 @@ function processPlayerCommand(socket) {
 
     socket.on('disconnect', function (reason) {
         console.log(">>player disconnect reason: %s", reason);
+        admin_namespace.to(socket.roomNum).emit('player-disconnect', reason);
         // remove player from room.
         let num = socket.roomNum;
         let room = rooms.get(num);
